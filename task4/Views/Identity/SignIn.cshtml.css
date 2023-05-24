@@ -1,0 +1,17 @@
+﻿
+.container {
+    width: 50%;
+}
+
+@media screen and (max-width: 576px) {
+    .container {
+        width: 100%;
+    }
+}
+
+.container * {
+    margin-bottom: 1rem;
+}
+
+
+

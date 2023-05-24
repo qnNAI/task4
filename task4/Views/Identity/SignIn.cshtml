@@ -1,0 +1,28 @@
+﻿@model Application.Models.Identity.SignInRequest
+
+<div class="container mt-5">
+    <form asp-antiforgery="true" asp-action="SignIn" asp-controller="Identity">
+    <div>
+        <div class="validation text-danger" asp-validation-summary="ModelOnly"></div>
+        <div>  
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" class="form-control" autocomplete="email" aria-required="true" placeholder="name@example.com" type="email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div>
+            <label asp-for="Password" class="form-label">Password</label>
+            <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" type="password" placeholder="password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div>
+            <input type="submit" value="Sign in" class="btn btn-success mb-0" />
+            <a asp-action="SignUp" class="btn btn-primary ms-2">Sign up</a>
+        </div>
+    </div>
+</form>
+
+</div>
+
+@section scripts {
+     <partial name="_ValidationScriptsPartial" />
+}

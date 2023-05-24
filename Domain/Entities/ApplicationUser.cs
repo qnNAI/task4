@@ -9,10 +9,8 @@ namespace Domain.Entities {
 
     public class ApplicationUser : IdentityUser {
 
-        public bool IsActive { get; set; }
-
+        public bool IsActive { get; set; } = true;
         public DateTime RegistrationDate { get; set; }
-
         public DateTime LastLogin { get; set; }
     }
 }
