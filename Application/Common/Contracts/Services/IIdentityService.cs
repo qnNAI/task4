@@ -14,5 +14,7 @@ namespace Application.Common.Contracts.Services
 
         Task<List<UserDto>> GetAllAsync();
         Task DeleteMultipleAsync(string[] users, CancellationToken cancellationToken = default);
+        Task LockMultipleAsync(string[] users, CancellationToken cancellationToken = default);
+        Task UnlockMultipleAsync(string[] users, CancellationToken cancellationToken = default);
     }
 }

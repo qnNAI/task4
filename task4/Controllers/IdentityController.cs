@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace task4.Controllers {
 
+    [Authorize]
     public class IdentityController : Controller {
         private readonly IIdentityService _identityService;
 
@@ -17,19 +18,20 @@ namespace task4.Controllers {
             _identityService = identityService;
         }
 
-        [Authorize]
         [HttpGet]
         public IActionResult UserManagement() {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult SignIn() {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> SignIn(SignInRequest request) {
             if (!ModelState.IsValid) {
                 return View(request);
@@ -46,7 +48,6 @@ namespace task4.Controllers {
             return RedirectToAction("");
         }
 
-        [Authorize]
         [HttpPost]
         public async new Task<IActionResult> SignOut() {
             await HttpContext.SignOutAsync();
@@ -54,12 +55,14 @@ namespace task4.Controllers {
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult SignUp() {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> SignUp(SignUpRequest request) {
             var result = await _identityService.SignUpAsync(request);
             if (!result.Succeeded) {
@@ -73,21 +76,37 @@ namespace task4.Controllers {
         }
 
         [HttpGet]
-        [Authorize]
         public IActionResult Users() {
             return ViewComponent("UsersComponent");
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> DeleteUsers(string[] users, CancellationToken cancellationToken) {
             await _identityService.DeleteMultipleAsync(users, cancellationToken);
 
-            if (users.Contains(HttpContext.User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier)?.Value)) {
+            if(_IsCurrentUserAffected(users)) {
                 await HttpContext.SignOutAsync();
                 return RedirectToAction("UserManagement");
             }
 
+            return RedirectToAction("Users");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LockUsers(string[] users, CancellationToken cancellationToken) {
+            await _identityService.LockMultipleAsync(users, cancellationToken);
+
+            if(_IsCurrentUserAffected(users)) {
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("UserManagement");
+            }
+
+            return RedirectToAction("Users");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UnlockUsers(string[] users, CancellationToken cancellationToken) {
+            await _identityService.UnlockMultipleAsync(users, cancellationToken);
             return RedirectToAction("Users");
         }
 
@@ -100,6 +119,10 @@ namespace task4.Controllers {
 
             var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+        }
+
+        private bool _IsCurrentUserAffected(string[] users) {
+            return users.Contains(HttpContext.User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
         }
 
         private void _AddModelErrors(AuthenticateResponse response) {

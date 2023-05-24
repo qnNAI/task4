@@ -92,10 +92,30 @@ namespace Application.Services
         }
 
         public async Task DeleteMultipleAsync(string[] users, CancellationToken cancellationToken = default) {
-            _context.Users.RemoveRange(
-                await _context.Users.Where(x => users.Contains(x.Id)).ToListAsync(cancellationToken));
+            this._context.Users.RemoveRange(
+                await _GetUsersByIdAsync(users, cancellationToken));
 
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task LockMultipleAsync(string[] users, CancellationToken cancellationToken = default) {
+            var existingUsers = await _GetUsersByIdAsync(users, cancellationToken);
+            foreach(var user in existingUsers) {
+                user.IsActive = false;
+            }
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task UnlockMultipleAsync(string[] users, CancellationToken cancellationToken = default) {
+            var existingUsers = await _GetUsersByIdAsync(users, cancellationToken);
+            foreach(var user in existingUsers) {
+                user.IsActive = true;
+            }
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        private async Task<List<ApplicationUser>> _GetUsersByIdAsync(string[] users, CancellationToken cancellationToken = default) {
+            return await _context.Users.Where(x => users.Contains(x.Id)).ToListAsync(cancellationToken);
         }
     }
 }

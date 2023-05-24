@@ -1,7 +1,7 @@
 ﻿@model Application.Models.Identity.SignInRequest
 
 <div class="container mt-5">
-    <form asp-antiforgery="true" asp-action="SignIn" asp-controller="Identity">
+    <form asp-antiforgery="true" asp-action="SignIn" asp-controller="Identity" method="post">
     <div>
         <div class="validation text-danger" asp-validation-summary="ModelOnly"></div>
         <div>  
