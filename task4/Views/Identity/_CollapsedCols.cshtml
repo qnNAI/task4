@@ -1,0 +1,27 @@
+﻿@using Application.Models.Identity;
+@model UserDto
+
+
+<div class="d-flex flex-column btns">
+    <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#@Model.Id-id" aria-expanded="false" aria-controls="@Model.Id-id">
+        Id
+    </button>
+    <div class="collapse" id="@Model.Id-id">
+        @Model.Id
+    </div>
+
+    <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#@Model.Id-reg" aria-expanded="false" aria-controls="@Model.Id-reg">
+        Registration date
+    </button>
+    <div class="collapse" id="@Model.Id-reg">
+        @Model.RegistrationDate.ToLocalTime()
+    </div>
+
+    <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#@Model.Id-login" aria-expanded="false" aria-controls="@Model.Id-login">
+        Last login
+    </button>
+    <div class="collapse" id="@Model.Id-login">
+        @Model.LastLogin.ToLocalTime()
+    </div>
+   
+</div>

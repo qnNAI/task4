@@ -1,0 +1,26 @@
+﻿.compact {
+    display: none;
+}
+
+th {
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+}
+
+#loader {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    * {
+        font-size: 0.9rem;
+    }
+
+    .compact {
+        display: table-cell;
+    }
+
+    .collapse-required {
+        display: none;
+    }
+}

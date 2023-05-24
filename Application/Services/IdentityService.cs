@@ -9,6 +9,7 @@ using Application.Models.Identity;
 using Domain.Entities;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
@@ -54,6 +55,7 @@ namespace Application.Services
 
             return new AuthenticateResponse { 
                 Succeeded = true,
+                Id = user.Id,
                 Email = user.Email!,
                 Username = user.UserName!
             };
@@ -73,13 +75,27 @@ namespace Application.Services
 
             var created = await _userManager.FindByEmailAsync(request.Email);
             created!.RegistrationDate = DateTime.UtcNow;
+            created!.LastLogin = DateTime.UtcNow;
             await _userManager.UpdateAsync(created);
 
             return new AuthenticateResponse {
                 Succeeded = true,
+                Id = created.Id,
                 Email = request.Email,
                 Username = request.Username
             };
+        }
+
+        public async Task<List<UserDto>> GetAllAsync() {
+            var users = await _userManager.Users.ProjectToType<UserDto>().ToListAsync();
+            return users;
+        }
+
+        public async Task DeleteMultipleAsync(string[] users, CancellationToken cancellationToken = default) {
+            _context.Users.RemoveRange(
+                await _context.Users.Where(x => users.Contains(x.Id)).ToListAsync(cancellationToken));
+
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

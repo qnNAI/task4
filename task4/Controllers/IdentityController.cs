@@ -14,12 +14,12 @@ namespace task4.Controllers {
         private readonly IIdentityService _identityService;
 
         public IdentityController(IIdentityService identityService) {
-            this._identityService = identityService;
+            _identityService = identityService;
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> UserManagement() {
+        public IActionResult UserManagement() {
             return View();
         }
 
@@ -46,16 +46,6 @@ namespace task4.Controllers {
             return RedirectToAction("");
         }
 
-        private async Task _SignInAsync(AuthenticateResponse response) {
-            var claims = new List<Claim> {
-                new Claim(ClaimTypes.Email, response.Email),
-                new Claim(ClaimsIdentity.DefaultNameClaimType, response.Username),
-            };
-
-            var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
-        }
-
         [Authorize]
         [HttpPost]
         public async new Task<IActionResult> SignOut() {
@@ -80,6 +70,36 @@ namespace task4.Controllers {
 
             await _SignInAsync(result);
             return RedirectToAction("");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Users() {
+            return ViewComponent("UsersComponent");
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> DeleteUsers(string[] users, CancellationToken cancellationToken) {
+            await _identityService.DeleteMultipleAsync(users, cancellationToken);
+
+            if (users.Contains(HttpContext.User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier)?.Value)) {
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("UserManagement");
+            }
+
+            return RedirectToAction("Users");
+        }
+
+        private async Task _SignInAsync(AuthenticateResponse response) {
+            var claims = new List<Claim> {
+                new Claim(ClaimTypes.NameIdentifier, response.Id),
+                new Claim(ClaimTypes.Email, response.Email),
+                new Claim(ClaimsIdentity.DefaultNameClaimType, response.Username),
+            };
+
+            var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
 
         private void _AddModelErrors(AuthenticateResponse response) {

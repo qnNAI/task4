@@ -11,5 +11,8 @@ namespace Application.Common.Contracts.Services
     {
         Task<AuthenticateResponse> SignInAsync(SignInRequest request);
         Task<AuthenticateResponse> SignUpAsync(SignUpRequest request);
+
+        Task<List<UserDto>> GetAllAsync();
+        Task DeleteMultipleAsync(string[] users, CancellationToken cancellationToken = default);
     }
 }

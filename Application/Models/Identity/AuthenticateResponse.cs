@@ -10,6 +10,7 @@ namespace Application.Models.Identity;
 public class AuthenticateResponse {
 
     public bool Succeeded { get; set; }
+    public string Id { get; set; }
     public string Username { get; set; } = null!;
     public string Email { get; set; } = null!;
 

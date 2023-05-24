@@ -1,0 +1,54 @@
+﻿@using Application.Models.Identity;
+@model IEnumerable<UserDto>
+
+
+<div class="spinner-border" role="status" id="loader">
+    <span class="visually-hidden">Loading...</span>
+</div>
+
+<div class="table-responsive" id="usersTable">
+    <table class="table table-hover table-sm">
+        <thead class="table-dark">
+            <tr>
+                <th><input type="checkbox" id="headCheckbox" /></th>
+                <th class="compact">Info</th>
+                <th class="collapse-required">Id</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th class="collapse-required">Registration date</th>
+                <th class="collapse-required">Last login</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @foreach(var user in Model) {
+                <tr>
+                    <th>
+                        <input type="checkbox" id="@user.Id" name="userCheckbox" />
+                    </th>
+                    <th class="compact">
+                        <partial name="_CollapsedCols" model="user" />
+                    </th>
+                    <th class="collapse-required">@user.Id</th>
+                    <th>@user.Username</th>
+                    <th>@user.Email</th>
+                    <th class="collapse-required">@user.RegistrationDate.ToLocalTime()</th>
+                    <th class="collapse-required">@user.LastLogin.ToLocalTime()</th>
+                    <th>
+                        <partial name="_UserStatus" model="user" />
+                    </th>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    let headCheckbox = document.getElementById('headCheckbox');
+
+    headCheckbox.addEventListener('change', function () {
+        let checkboxes = document.getElementsByName('userCheckbox');
+        checkboxes.forEach(x => x.checked = this.checked);
+    });
+</script>

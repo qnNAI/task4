@@ -1,0 +1,11 @@
+﻿.btns > * {
+    margin-bottom: 1rem;
+}
+
+.btns > *:last-of-type {
+    margin-bottom: 0;
+}
+
+.btns > div:last-of-type {
+    margin-top: 1rem;
+}
