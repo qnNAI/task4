@@ -44,8 +44,14 @@ function unlockUsers(url) {
 
 function sendSelectedUsers(url, selected) {
     return $.ajax({
-        beforeSend: () => $('#loader').show(),
-        complete: () => $('#loader').hide(),
+        beforeSend: () => {
+            $('#loader').show();
+            $('#usersTable').hide();
+        },
+        complete: () => {
+            $('#loader').hide();
+            $('#usersTable').show();
+        },
         url: `${url}`,
         type: 'POST',
         cache: false,

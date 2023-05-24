@@ -1,5 +1,9 @@
 ﻿@model Application.Models.Identity.SignInRequest
 
+@{
+    ViewData["Title"] = "Sign in";
+}
+
 <div class="container mt-5">
     <form asp-antiforgery="true" asp-action="SignIn" asp-controller="Identity" method="post">
     <div>
