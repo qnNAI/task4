@@ -32,13 +32,16 @@ function lockUsers(url, signinUrl) {
         });
 }
 
-function unlockUsers(url) {
+function unlockUsers(url, signinUrl) {
     let selected = getCheckedUsers();
     if (selected.length == 0) return;
 
     sendSelectedUsers(url, selected)
         .done(result => {
             refreshUsersTable(result);
+        })
+        .fail(result => {
+            handleUnauthorized(result, signinUrl);
         });
 }
 
@@ -66,6 +69,7 @@ function refreshUsersTable(result) {
 }
 
 function handleUnauthorized(result, signinUrl) {
+    debugger;
     if (result.status === 401) {
         window.location.replace(signinUrl);
     }
